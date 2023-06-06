@@ -32,6 +32,12 @@ module.exports = {
             "configurable": true,
             "required": true,
             "default": null
+        },
+        "redirect_uri": {
+            "type": "string",
+            "configurable": true,
+            "required": true,
+            "default": null
         }
     }
 }

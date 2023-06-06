@@ -1,5 +1,5 @@
-# WeChat MiniProgram Auth
-WeChat MiniProgram Auth helps you to easily create WeChat MiniProgram authentication available for your user. It uses the official [USER LOGIN REQUEST](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/user-login/code2Session.html) to get the authorization, you can get it working in under 5 minutes in your WeChat MiniProgram application.
+# WeChat H5 Auth
+WeChat H5 Auth helps you to easily create WeChat H5 authentication available for your user. 
 
 # Features
 - Official USER LOGIN REQUEST integration
@@ -11,14 +11,14 @@ WeChat MiniProgram Auth helps you to easily create WeChat MiniProgram authentica
 # How to use
 ### STEP 1
 Install the strapi plugin
-> npm i strapi-wechat-miniprogram-auth
+> npm i strapi-wechat-h5-auth
 
 ### STEP 2
 Add the folling lines of code in the file: config/plugins.js
 ```
 module.exports = {
     // ...
-    'strapi-wechat-miniprogram-auth': {
+    'strapi-wechat-h5-auth': {
         enabled: true
     },
     // ...
@@ -28,9 +28,9 @@ After done this, you can start the application with command:
 > npm run develop
 
 ### STEP 3
-- Config the WeChat AppID and AppSecret.
+- Config the WeChat AppID，AppSecret and redirct_url.
 
-Go to the Strapi Dashboard, and change to the PLUGINS -> WeChat Mini Program Authenticator, input the AppID,AppSecret and save it.
+Go to the Strapi Dashboard, and change to the PLUGINS -> WeChat H5 Authenticator, input the AppID,AppSecret,redirect_url and save it.
 
 - Add fileds to User Collection
 
@@ -43,38 +43,35 @@ Add two fields to this collection, and save.
 
 ### STEP 4
 
-Use the getUserInfo button in your WeChat MiniProgram to get the current userinfo and use wx.login to get User login credentials
+Use the getUserInfo button in your WeChat H5 to get the current userinfo
 
-#### WXML
+#### HTML
 
 ```html
-<!-- 需要使用 button 来授权登录 -->
-<button open-type="getUserInfo" bindgetuserinfo="login">授权登录</button>
+<!-- use a tag go wx login -->
+<a href="<STRAPI_BACKEND>/strapi-wechat-h5-auth/code">    
+    <span>登录</span>
+</a>
 ```
 
 #### Javascript
 Initialisation a request to STRAPI_BACKEND to get JWT token and Sanitized userinfo.
 
 ```javascript
-login(e) {
-    let userInfo = e.detail.userInfo
-    wx.login({
-      success: res => {
-        // 发送res.code到后台换取openId,sessionKey,unionId
-        wx.request({
-          url: 'http://STRAPI_BACKEND_URL/strapi-wechat-miniprogram-auth/login',
-          method: "post",
-          data: {
-            code: res.code,
-            userInfo
-          },
-          success(res) {
-            console.log('wx.request res', res)
-          }
-        })
-      }
+// code from <FRONTEND>?code=xxxx
+const urlParams = getUrlParams();
+if(urlParams.code){
+    $.ajax({
+        type: 'POST',
+        url: '<STRAPI_BACKEND>/strapi-wechat-h5-auth/login',
+        data: {
+            code: urlParams.code
+        },
+        success(response){
+          // when get userinfo success
+        }
     })
-  }
+}
 ```
 
 The STRAPI_BACKEND request response look like this:
@@ -108,3 +105,5 @@ You can using the JWT token in your application.
 
 # Report Bugs/Issues
 Any bugs/issues you may face can be submitted as issues in the Github repo.
+
+Inspired by [/wfzong/strapi-wechat-miniprogram](https://github.com/wfzong/strapi-wechat-miniprogram-auth)

@@ -23,11 +23,23 @@ module.exports = ({ strapi }) => ({
       ctx.body = { status: false }
     }
   },
+  async getCode(ctx) {
+    try {
+      let loginUrl = await strapi
+        .plugin(pluginId)
+        .service('wechatService')
+        .getCode();
+      ctx.redirect(loginUrl)
+    } catch (error) {
+      console.log(error)
+      ctx.body = error
+    }
+  },
 
   async login(ctx) {
     try {
       const code = ctx.request.body.code ? ctx.request.body.code : null;
-      const userInfo = typeof ctx.request.body.userInfo === 'object' ? ctx.request.body.userInfo : {};
+      const userInfo = ctx.request.body.userInfo ? ctx.request.body.userInfo : null;
       if (!code) {
         throw new ValidationError("Invalid/Missing auth code", null);
       }

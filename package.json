@@ -1,5 +1,5 @@
 {
-  "name": "strapi-wechat-miniprogram-auth",
+  "name": "strapi-wechat-h5-auth",
   "version": "0.0.5",
   "description": "Helps you to easily create WeChat MiniProgram authentication available for your user.",
   "strapi": {
@@ -13,15 +13,15 @@
   },
   "dependencies": {},
   "author": {
-    "name": "wfzong",
-    "email": "wfz123@126.com",
-    "url": "https://juejin.cn/user/61228379824296"
+    "name": "sunzehui",
+    "email": "501574022@qq.com",
+    "url": "https://hui.zone"
   },
   "maintainers": [
     {
-      "name": "wfzong",
-      "email": "wfz123@126.com",
-      "url": "https://juejin.cn/user/61228379824296"
+      "name": "sunzehui",
+      "email": "501574022@qq.com",
+      "url": "https://hui.zone"
     }
   ],
   "engines": {
@@ -34,11 +34,11 @@
     "strapi plugin",
     "Authentication",
     "WeChat",
-    "MiniProgram",
+    "H5",
     "user-permission"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/wfzong/strapi-wechat-miniprogram-auth.git"
+    "url": "https://github.com/sunzehui/strapi-wechat-h5-auth.git"
   }
 }

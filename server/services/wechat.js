@@ -41,8 +41,19 @@ module.exports = ({ strapi }) => ({
       }
     })
   },
+  async getCode() {
+    let credentials = await this.getWeChatCredentials();
+    if (!credentials) {
+      throw new Error({ error: true, message: "Add credentials to activate the login feature." })
+    }
+    const { app_id, app_secret, redirect_uri } = credentials;
+    if (!app_id || !app_secret) {
+      throw new Error({ error: true, message: "Missing credentials" });
+    }
 
-  login(code, userInfo = {}) {
+    return `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${app_id}&redirect_uri=${redirect_uri}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect`
+  },
+  login(code, userInfo = null) {
     return new Promise(async (resolve, reject) => {
       try {
         let credentials = await this.getWeChatCredentials();
@@ -55,15 +66,19 @@ module.exports = ({ strapi }) => ({
           return reject({ error: true, message: "Missing credentials" });
         }
 
-        let resData = await axios.get(`https://api.weixin.qq.com/sns/jscode2session?appid=${app_id}&secret=${app_secret}&js_code=${code}&grant_type=authorization_code`)
-        if (resData.status !== 200) {
+        const getTokenUrl = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${app_id}&secret=${app_secret}&code=${code}&grant_type=authorization_code`
+        const tokenRes = await axios.get(getTokenUrl)
+        if (tokenRes.status !== 200) {
           return reject({ error: true, message: "Error occur when request to wechat api" });
         }
-        if (!resData.data.openid) {
-          return reject({ error: true, message: resData.data });
+        if (!tokenRes.data.openid) {
+          return reject({ error: true, message: tokenRes.data });
         }
 
-        const { openid } = resData.data;
+        const { openid, access_token } = tokenRes.data;
+        const getUserInfoUrl = `https://api.weixin.qq.com/sns/userinfo?access_token=${access_token}&openid=${openid}&lang=zh_CN`
+        const userInfoRes = await axios.get(getUserInfoUrl)
+
         const user = await strapi.db.query('plugin::users-permissions.user').findOne({ where: { openid } });
         if (!user) {
           let randomPass = this.makeRandomPassword(10);
@@ -72,7 +87,7 @@ module.exports = ({ strapi }) => ({
             data: {
               password,
               openid,
-              wechatUserInfo: userInfo,
+              wechatUserInfo: userInfo || userInfoRes.data,
               confirmed: true,
               blocked: false,
               role: 1,

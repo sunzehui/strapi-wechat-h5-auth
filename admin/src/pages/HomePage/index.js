@@ -20,22 +20,29 @@ const HomePage = () => {
   const { formatMessage } = useIntl();
   const [creds, setCreds] = useState({
     app_id: "",
-    app_secret: ""
+    app_secret: "",
+    redirect_uri: "",
   });
   const [saving, setSaving] = useState(false);
   const [editable, setEditable] = useState(true);
 
   function handleAppID(app_id) {
     setCreds({
+      ...creds,
       app_id: app_id,
-      app_secret: creds.app_secret,
     })
   }
 
   function handleAppSecret(app_secret) {
     setCreds({
-      app_id: creds.app_id,
+      ...creds,
       app_secret: app_secret,
+    })
+  }
+  function handleRedirect_uri(redirect_uri) {
+    setCreds({
+      ...creds,
+      redirect_uri: redirect_uri,
     })
   }
 
@@ -45,6 +52,7 @@ const HomePage = () => {
       setCreds({
         app_id: data.app_id ? data.app_id : "",
         app_secret: data.app_secret ? data.app_secret : "",
+        redirect_uri: data.redirect_uri ? data.redirect_uri : "",
       })
       if (data) {
         if (data.app_id && data.app_secret) {
@@ -59,7 +67,8 @@ const HomePage = () => {
       console.log(error);
       setCreds({
         app_id: "",
-        app_secret: ""
+        app_secret: "",
+        redirect_uri: "",
       })
       setEditable(true);
     }
@@ -116,6 +125,22 @@ const HomePage = () => {
           })}</Typography>
         </Box>
         <GridLayout>
+          <Box padding={4} hasRadius background="neutral0" shadow="tableShadow">
+            <TextInput
+              required
+              disabled={!editable}
+              placeholder={formatMessage({
+                id: getTrad('Form.input.redirect_uri.placeholder'),
+                defaultMessage: 'Please input your redirect_uri',
+              })}
+              label={formatMessage({
+                id: getTrad('Form.input.redirect_uri.label'),
+                defaultMessage: 'WeChat Mini Program redirect_uri',
+              })}
+              name="redirect_uri"
+              onChange={e => handleRedirect_uri(e.target.value)}
+              value={creds.redirect_uri} />
+          </Box>
           <Box padding={4} hasRadius background="neutral0" shadow="tableShadow">
             <TextInput
               required

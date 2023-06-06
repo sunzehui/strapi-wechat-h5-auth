@@ -28,4 +28,14 @@ module.exports = [
     },
   },
 
+  {
+    method: 'GET',
+    path: '/code',
+    handler: 'wechatController.getCode',
+    config: {
+      auth: false,
+      policies: [],
+    },
+  },
+
 ];
